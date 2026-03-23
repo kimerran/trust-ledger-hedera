@@ -579,14 +579,66 @@ html, body { background: #0A0F0E; }
 <!-- SLIDE 6 — MARKET -->
 <div class="slide" id="s6">
   <div class="glow"></div>
-  <!-- content added in Task 5 -->
+  <div class="slide-num">05 / Market</div>
+  <div class="slide-title">A large market with no dominant player.</div>
+  <div class="divider"></div>
+  <div class="col3">
+    <div class="col-card">
+      <span class="col-badge">TAM</span>
+      <div class="col-val">$X B</div>
+      <div class="col-title">AI Governance &amp; Compliance Software</div>
+      <div class="col-desc">Total addressable market for AI audit, explainability, and compliance tooling. Growing at ~35% CAGR as regulatory pressure increases globally. <em style="color:rgba(255,255,255,0.25);font-size:8.5px">(Source: TBD — founder to add citation)</em></div>
+    </div>
+    <div class="col-card featured">
+      <span class="col-badge">SAM</span>
+      <div class="col-val">$X B</div>
+      <div class="col-title">Regulated Enterprises Using AI</div>
+      <div class="col-desc">Enterprises in financial services, healthcare, insurance, and legal verticals actively deploying AI in decision workflows — subject to regulatory scrutiny today.</div>
+    </div>
+    <div class="col-card">
+      <span class="col-badge">SOM</span>
+      <div class="col-val">$X M</div>
+      <div class="col-title">Beachhead Segment</div>
+      <div class="col-desc">Mid-market compliance-focused companies (100–2,000 employees) with AI in production and an active need for audit trail tooling — reachable in year one.</div>
+    </div>
+  </div>
   <div class="sfooter">Market</div>
 </div>
 
 <!-- SLIDE 7 — PRODUCT -->
 <div class="slide" id="s7">
   <div class="glow"></div>
-  <!-- content added in Task 5 -->
+  <div class="slide-num">06 / Product</div>
+  <div class="slide-title">Built and working today.</div>
+  <div class="divider"></div>
+  <div class="two-col">
+    <div>
+      <ul class="bullets">
+        <li><div class="bdot"></div><div class="btext"><strong>Real-time audit dashboard</strong> — every AI decision logged, timestamped, and visible in a searchable web UI</div></li>
+        <li><div class="bdot"></div><div class="btext"><strong>3-layer cryptographic verification</strong> — hash integrity, KMS signature, and HCS sequence number checked independently</div></li>
+        <li><div class="bdot"></div><div class="btext"><strong>Public verification URL</strong> — share a link; anyone can verify a decision record without an account</div></li>
+        <li><div class="bdot"></div><div class="btext"><strong>Retention policies</strong> — configurable per-topic record retention on Hedera HCS</div></li>
+        <li><div class="bdot"></div><div class="btext"><strong>AI risk assessment</strong> — every decision scored by Claude before anchoring, with reasoning stored in the audit record</div></li>
+      </ul>
+    </div>
+    <div>
+      <div class="terminal">
+<span class="dim">$ GET /verify/dec_a3f9b2c1</span>
+
+<span class="tk">decision_id</span>  <span class="tv">dec_a3f9b2c1</span>
+<span class="tk">model        </span>  <span class="tv">claude-haiku-4-5</span>
+<span class="tk">risk_score   </span>  <span class="tv">0.12 (LOW)</span>
+<span class="tk">hash         </span>  <span class="tv">sha256:e3b0c44298fc…</span>
+<span class="tk">signed_by    </span>  <span class="tv">AWS KMS / arn:…</span>
+<span class="tk">hcs_topic    </span>  <span class="tv">0.0.5291949</span>
+<span class="tk">sequence     </span>  <span class="tv">#4821</span>
+<span class="tk">anchored_at  </span>  <span class="tv">2026-03-23T14:02:11Z</span>
+
+<span class="tk">verification </span>  <span class="tok">✓ PASS (3/3 layers)</span>
+      </div>
+      <div class="callout" style="margin-top:12px">Try it: <strong>[demo URL]</strong> &nbsp;·&nbsp; Placeholder — founder to fill</div>
+    </div>
+  </div>
   <div class="sfooter">Product</div>
 </div>
 
