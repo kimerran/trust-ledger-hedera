@@ -35,7 +35,7 @@ const initialState: WizardState = {
 // Wizard steps:
 //   0 = Welcome
 //   1 = Submit Decision (AI Decision)
-//   2 = Blockchain Anchor (shows CRE command)
+//   2 = HCS Anchor (shows anchoring details)
 //   3 = Verify (3-layer check)
 //   4 = Proof & Summary
 

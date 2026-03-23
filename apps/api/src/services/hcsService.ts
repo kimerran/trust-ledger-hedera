@@ -126,15 +126,29 @@ export async function submitHCSMessage(message: string): Promise<HCSMessageResul
   const response = await tx.execute(client);
   const receipt = await response.getReceipt(client);
 
+  const sequenceNumber = Number(receipt.topicSequenceNumber);
+  const transactionId = response.transactionId.toString();
+
+  // Poll mirror node for the consensus timestamp (typically available within 5-10s)
+  let consensusTimestamp = '';
+  for (let attempt = 0; attempt < 10; attempt++) {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    const mirror = await verifyHCSMessage(topicIdStr, sequenceNumber);
+    if (mirror.consensusTimestamp) {
+      consensusTimestamp = mirror.consensusTimestamp;
+      break;
+    }
+  }
+
   const result: HCSMessageResult = {
     topicId: topicIdStr,
-    sequenceNumber: Number(receipt.topicSequenceNumber),
-    transactionId: response.transactionId.toString(),
-    consensusTimestamp: new Date().toISOString(),
+    sequenceNumber,
+    transactionId,
+    consensusTimestamp,
   };
 
   log.info(
-    { topicId: topicIdStr, sequenceNumber: result.sequenceNumber },
+    { topicId: topicIdStr, sequenceNumber, consensusTimestamp },
     'HCS message submitted',
   );
 

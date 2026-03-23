@@ -63,8 +63,9 @@ async function assessRisk(input: AnchorInput): Promise<RiskAssessment> {
       ],
     });
 
-    const text =
+    const raw =
       response.content[0]?.type === 'text' ? response.content[0].text : '{}';
+    const text = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
     return JSON.parse(text) as RiskAssessment;
   } catch (err) {
     log.error({ err }, 'Risk assessment failed');

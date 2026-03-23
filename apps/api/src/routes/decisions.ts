@@ -182,7 +182,7 @@ router.post('/', tenantGuard, async (req, res) => {
         .set({
           riskLevel: anchorResult.riskAssessment.riskLevel,
           riskSummary: anchorResult.riskAssessment.summary,
-          txHash: anchorResult.hcsResult.transactionId,
+          txHash: anchorResult.hcsResult.consensusTimestamp || anchorResult.hcsResult.transactionId,
           sequenceNumber: anchorResult.hcsResult.sequenceNumber,
           hcsTopicId: anchorResult.hcsResult.topicId,
           status: 'ANCHORED',

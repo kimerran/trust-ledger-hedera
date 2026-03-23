@@ -1,0 +1,8 @@
+[build]
+builder = "nixpacks"
+buildCommand = "pnpm install --frozen-lockfile && pnpm --filter @trustledger/shared build && pnpm --filter demo build"
+
+[deploy]
+startCommand = "node apps/demo/.next/standalone/server.js"
+healthcheckPath = "/"
+restartPolicyType = "on_failure"

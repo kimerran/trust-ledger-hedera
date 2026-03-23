@@ -134,7 +134,14 @@ export default async function DecisionDrilldownPage({
             {decision.txHash && (
               <div>
                 <p className="text-xs text-muted-foreground mb-1">Transaction ID</p>
-                <code className="text-xs break-all">{decision.txHash}</code>
+                <a
+                  href={`${hashScanBaseUrl}/transaction/${decision.txHash.includes('@') ? decision.txHash.split('@')[1] : decision.txHash}/message`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-primary underline break-all"
+                >
+                  {decision.txHash}
+                </a>
               </div>
             )}
           </CardContent>

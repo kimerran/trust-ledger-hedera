@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     default: 'TrustLedger',
     template: '%s | TrustLedger',
   },
-  description: 'Cryptographic audit trail for AI decisions — powered by Chainlink CRE',
+  description: 'Cryptographic audit trail for AI decisions — powered by Hedera Consensus Service',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
