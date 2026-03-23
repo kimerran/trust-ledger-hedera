@@ -170,7 +170,7 @@ export default async function DecisionDrilldownPage({
       {verification ? (
         <VerificationLayers result={verification} />
       ) : (
-        <Card>
+        <Card className="border border-[#E0F2F1] shadow-[0_4px_16px_rgba(13,87,82,0.10)]">
           <CardContent className="py-6 text-center text-muted-foreground text-sm">
             Verification not yet available
           </CardContent>

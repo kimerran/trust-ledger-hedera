@@ -16,7 +16,7 @@ function LayerRow({
   detail: string;
 }) {
   return (
-    <div className={`flex items-start gap-3 py-3 border-b border-[#E0F2F1] last:border-0 pl-3 border-l-4 ${pass ? 'border-l-emerald-500' : 'border-l-red-400'}`}>
+    <div className={`flex items-start gap-3 py-3 border-b border-b-[#E0F2F1] last:border-0 pl-3 border-l-4 ${pass ? 'border-l-emerald-500' : 'border-l-red-400'}`}>
       <span className={`mt-0.5 font-bold text-sm ${pass ? 'text-emerald-600' : 'text-red-500'}`}>
         {pass ? '\u2713' : '\u2717'}
       </span>
