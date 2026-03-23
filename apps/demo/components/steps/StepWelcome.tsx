@@ -11,10 +11,10 @@ interface StepWelcomeProps {
 
 export function StepWelcome({ onBegin, isLoading }: StepWelcomeProps) {
   return (
-    <Card>
+    <Card className="border border-[#E0F2F1] rounded-xl shadow-[0_4px_16px_rgba(13,87,82,0.10)]">
       <CardHeader>
-        <CardTitle>AI Decision Audit Trail</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-[#0D5752]">AI Decision Audit Trail</CardTitle>
+        <CardDescription className="text-[#5F9EA0]">
           Walk through the full TrustLedger pipeline step by step. You&apos;ll submit an AI
           decision, anchor it on Hedera, verify it with 3 independent layers, and download a
           tamper-proof audit proof.
@@ -24,9 +24,9 @@ export function StepWelcome({ onBegin, isLoading }: StepWelcomeProps) {
         <PipelineDiagram />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-          <div className="space-y-2 p-4 rounded-md bg-muted/50">
-            <p className="font-semibold">What you&apos;ll see:</p>
-            <ul className="space-y-1 text-muted-foreground list-disc list-inside">
+          <div className="space-y-2 p-4 rounded-md bg-[#E0F2F1] border border-[#B2DFDB]">
+            <p className="font-semibold text-[#0D5752]">What you&apos;ll see:</p>
+            <ul className="space-y-1 text-[#5F9EA0] list-disc list-inside">
               <li>Canonical hash computation (RFC 8785)</li>
               <li>KMS digital signature (AWS)</li>
               <li>Blockchain anchoring via Hedera Consensus Service</li>
@@ -34,9 +34,9 @@ export function StepWelcome({ onBegin, isLoading }: StepWelcomeProps) {
               <li>Downloadable audit proof artifact</li>
             </ul>
           </div>
-          <div className="space-y-2 p-4 rounded-md bg-muted/50">
-            <p className="font-semibold">Prerequisites:</p>
-            <ul className="space-y-1 text-muted-foreground list-disc list-inside">
+          <div className="space-y-2 p-4 rounded-md bg-[#E0F2F1] border border-[#B2DFDB]">
+            <p className="font-semibold text-[#0D5752]">Prerequisites:</p>
+            <ul className="space-y-1 text-[#5F9EA0] list-disc list-inside">
               <li>API running on localhost:3001</li>
               <li>Database seeded with demo data</li>
               <li>Docker services running (Postgres + Redis)</li>
@@ -45,7 +45,12 @@ export function StepWelcome({ onBegin, isLoading }: StepWelcomeProps) {
         </div>
 
         <div className="flex justify-center pt-2">
-          <Button size="lg" onClick={onBegin} disabled={isLoading}>
+          <Button
+            size="lg"
+            onClick={onBegin}
+            disabled={isLoading}
+            className="shadow-[0_2px_6px_rgba(13,87,82,0.3)]"
+          >
             {isLoading ? 'Initializing...' : 'Begin Demo'}
           </Button>
         </div>
