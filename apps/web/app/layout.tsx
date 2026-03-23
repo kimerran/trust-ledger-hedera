@@ -19,9 +19,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={roboto.className}>
         <SessionProvider>
           <div className="min-h-screen bg-background">
-            <nav className="border-b">
+            <nav className="border-b border-[#B2DFDB] bg-white">
               <div className="container flex h-16 items-center gap-6">
-                <a href="/dashboard" className="font-semibold text-lg">
+                <a href="/dashboard" className="font-bold text-lg text-[#0D5752]">
                   TrustLedger
                 </a>
                 <div className="flex gap-4 text-sm">
