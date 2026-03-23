@@ -94,19 +94,21 @@ Seed-stage investor pitch deck for TrustLedger. Audience: VCs and angel investor
 ### Slide 5 — Why Now
 - Label: `04 / Why Now`
 - Title: "Regulation caught up. Enterprises must act now."
-- Timeline or 3-column layout:
+- **3-column layout** (one column per regulation):
   - EU AI Act (2025): mandatory explainability for high-risk AI
   - SEC AI Guidance: investment AI must maintain records
   - NIST AI RMF: risk management framework adopted by US agencies
-- Closing line: "The compliance window is open — enterprises are looking for solutions today"
+- Each column: regulation name as header, 1–2 sentence description, year badge
+- Closing line below columns: "The compliance window is open — enterprises are looking for solutions today"
 
 ### Slide 6 — Market
 - Label: `05 / Market`
 - Title: "A large market with no dominant player."
-- TAM / SAM / SOM concentric ring or 3-column layout:
+- **3-column layout** (TAM / SAM / SOM as stat-style cards — consistent with Slide 2 stat boxes):
   - TAM: AI governance & compliance software ($X B, source TBD)
   - SAM: Enterprises in regulated industries (finance, healthcare, insurance) using AI
   - SOM: Early beachhead — mid-market compliance-focused companies
+- Each column: label, large teal number/value, 1-sentence description
 - Note: market size figures to be filled in by founder before distribution
 
 ### Slide 7 — Product
@@ -114,8 +116,8 @@ Seed-stage investor pitch deck for TrustLedger. Audience: VCs and angel investor
 - Title: "Built and working today."
 - Two-column layout:
   - Left: bullet list of capabilities (real-time dashboard, 3-layer verification, public verify URL, retention policies, HCS anchoring)
-  - Right: simplified ASCII/text mockup of the dashboard or verification page
-- Bottom: "Try it: [demo URL]"
+  - Right: styled text block simulating a terminal/dashboard readout — placeholder text showing a decision record (decision ID, risk score, HCS sequence number, status: VERIFIED). Founder does not need to fill this in; it is illustrative.
+- Bottom: "Try it: [demo URL]" (placeholder — founder to fill)
 
 ### Slide 8 — Business Model
 - Label: `07 / Business Model`
@@ -156,10 +158,11 @@ docs/pitch-deck/
 - `slides.html` contains all 10 slides as `<div class="slide">` blocks
 - CSS uses `@page { size: 1280px 720px; margin: 0; }` and `page-break-after: always`
 - Puppeteer launches headless Chrome, loads the file, exports PDF
+- `page.pdf()` must be called with `{ width: '1280px', height: '720px', printBackground: true }` — the explicit width/height overrides any OS default and ensures the CSS `@page` size is honoured across Puppeteer versions
 - Script: `node docs/pitch-deck/generate.js` → outputs PDF
 
 ### Dependencies
-- `puppeteer` (Node) — added to root `package.json` as a dev dependency
+- `puppeteer` (Node) — added to a **standalone `docs/pitch-deck/package.json`** to avoid touching the monorepo workspace config. Run `npm install` inside `docs/pitch-deck/` before generating.
 - No other dependencies — all design is pure CSS, no external fonts or images
 
 ### Placeholders (founder to fill before sending)
