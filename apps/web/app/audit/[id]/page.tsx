@@ -66,7 +66,7 @@ export default async function DecisionDrilldownPage({
           <Link href="/audit" className="text-sm text-muted-foreground hover:text-foreground">
             &larr; Audit Log
           </Link>
-          <h1 className="text-2xl font-bold mt-2 font-mono">{decision.id}</h1>
+          <h1 className="text-2xl font-bold mt-2 font-mono text-[#0D5752]">{decision.id}</h1>
         </div>
         <div className="flex gap-2">
           <Badge variant={statusVariant}>{decision.status}</Badge>
@@ -79,7 +79,7 @@ export default async function DecisionDrilldownPage({
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Card>
+        <Card className="border border-[#E0F2F1] shadow-[0_4px_16px_rgba(13,87,82,0.10)]">
           <CardHeader>
             <CardTitle className="text-base">Decision Details</CardTitle>
           </CardHeader>
@@ -98,7 +98,7 @@ export default async function DecisionDrilldownPage({
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border border-[#E0F2F1] shadow-[0_4px_16px_rgba(13,87,82,0.10)]">
           <CardHeader>
             <CardTitle className="text-base">Cryptographic Proof</CardTitle>
           </CardHeader>
@@ -142,13 +142,13 @@ export default async function DecisionDrilldownPage({
       </div>
 
       {decision.riskSummary && (
-        <Card className="border-primary/30 bg-primary/[0.03]">
+        <Card className="bg-[#E0F2F1] border border-[#B2DFDB]">
           <CardHeader className="flex flex-row items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-lg">{'\u2726'}</span>
-              <CardTitle className="text-base">LLM Risk Assessment</CardTitle>
+              <span className="text-lg text-[#0D5752]">{'\u2726'}</span>
+              <CardTitle className="text-base text-[#0D5752]">LLM Risk Assessment</CardTitle>
             </div>
-            <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+            <span className="text-[10px] text-[#5F9EA0] bg-white/60 px-2 py-0.5 rounded-full">
               Powered by Claude Haiku
             </span>
           </CardHeader>
@@ -177,12 +177,12 @@ export default async function DecisionDrilldownPage({
         </Card>
       )}
 
-      <Card>
+      <Card className="border border-[#E0F2F1] shadow-[0_4px_16px_rgba(13,87,82,0.10)]">
         <CardHeader>
-          <CardTitle className="text-base">Parameters</CardTitle>
+          <CardTitle className="text-base text-[#0D5752]">Parameters</CardTitle>
         </CardHeader>
         <CardContent>
-          <pre className="text-xs overflow-auto">
+          <pre className="text-xs overflow-auto bg-[#F0FAFA] rounded-md p-3">
             {JSON.stringify(decision.topFeatures, null, 2)}
           </pre>
         </CardContent>
