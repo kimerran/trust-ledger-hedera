@@ -16,15 +16,14 @@ function LayerRow({
   detail: string;
 }) {
   return (
-    <div className="flex items-start gap-3 py-3 border-b last:border-0">
-      <span className={`mt-0.5 text-lg ${pass ? 'text-green-500' : 'text-red-500'}`}>
+    <div className={`flex items-start gap-3 py-3 border-b border-[#E0F2F1] last:border-0 pl-3 border-l-4 ${pass ? 'border-l-emerald-500' : 'border-l-red-400'}`}>
+      <span className={`mt-0.5 font-bold text-sm ${pass ? 'text-emerald-600' : 'text-red-500'}`}>
         {pass ? '\u2713' : '\u2717'}
       </span>
       <div className="flex-1">
         <p className="font-medium text-sm">{label}</p>
         <p className="text-xs text-muted-foreground font-mono mt-0.5 break-all">{detail}</p>
       </div>
-      <Badge variant={pass ? 'success' : 'destructive'}>{pass ? 'PASS' : 'FAIL'}</Badge>
     </div>
   );
 }
@@ -36,7 +35,7 @@ export function VerificationLayers({ result }: VerificationLayersProps) {
     overall === 'PASS' ? 'success' : overall === 'FAIL' ? 'destructive' : 'warning';
 
   return (
-    <Card>
+    <Card className="border border-[#E0F2F1] shadow-[0_4px_16px_rgba(13,87,82,0.10)] overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-base">Verification Result</CardTitle>
         <div className="flex items-center gap-2">
