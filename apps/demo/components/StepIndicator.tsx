@@ -17,43 +17,37 @@ interface PipelineIndicatorProps {
 
 export function PipelineIndicator({ completedStages, activeStage }: PipelineIndicatorProps) {
   return (
-    <div className="flex items-start justify-between mb-8">
-      {PIPELINE_STAGES.map((stage, i) => {
-        const done = i < completedStages;
-        const active = i === activeStage;
-        return (
-          <div key={stage.label} className="flex items-center flex-1">
-            <div className="flex flex-col items-center flex-1">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                  done
-                    ? 'bg-green-600 text-white'
-                    : active
-                      ? 'bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2'
-                      : 'bg-muted text-muted-foreground'
-                }`}
-              >
-                {done ? '\u2713' : i + 1}
-              </div>
-              <span
-                className={`text-[11px] mt-1 font-medium ${
-                  active ? 'text-foreground' : done ? 'text-green-700' : 'text-muted-foreground'
-                }`}
-              >
-                {stage.label}
+    <div className="mb-8">
+      <div className="flex items-center flex-wrap">
+        {PIPELINE_STAGES.map((stage, i) => {
+          const done = i < completedStages;
+          const active = i === activeStage;
+
+          const pillClass = done
+            ? 'bg-emerald-100 border border-emerald-300 text-emerald-700 font-semibold'
+            : active
+              ? 'bg-[#0D5752] text-white font-semibold shadow-[0_2px_8px_rgba(13,87,82,0.35)]'
+              : 'bg-[#E0F2F1] border border-[#B2DFDB] text-[#80A89E]';
+
+          const prefix = done ? '✓ ' : active ? '● ' : '';
+
+          return (
+            <div key={stage.label} className="flex items-center">
+              <span className={`rounded-full px-3 py-1 text-xs whitespace-nowrap transition-all ${pillClass}`}>
+                {prefix}{stage.label}
               </span>
-              <span className="text-[10px] text-muted-foreground">{stage.sub}</span>
+              {i < PIPELINE_STAGES.length - 1 && (
+                <div className="h-px w-3 bg-[#B2DFDB] flex-shrink-0" />
+              )}
             </div>
-            {i < PIPELINE_STAGES.length - 1 && (
-              <div
-                className={`h-0.5 w-full min-w-[12px] mt-4 ${
-                  i < completedStages ? 'bg-green-600' : 'bg-border'
-                }`}
-              />
-            )}
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
+      {activeStage >= 0 && (
+        <p className="text-[10px] text-[#5F9EA0] text-center mt-2">
+          Step {activeStage + 1} of 5 — {PIPELINE_STAGES[activeStage].label}
+        </p>
+      )}
     </div>
   );
 }
