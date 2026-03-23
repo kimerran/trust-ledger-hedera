@@ -3,9 +3,9 @@ import { NextResponse } from 'next/server';
 
 export default auth((req) => {
   if (!req.auth) {
-    const loginUrl = req.nextUrl.clone();
-    loginUrl.pathname = '/login';
-    return NextResponse.redirect(loginUrl);
+    const host = req.headers.get('x-forwarded-host') ?? req.nextUrl.host;
+    const proto = req.headers.get('x-forwarded-proto') ?? req.nextUrl.protocol.replace(':', '');
+    return NextResponse.redirect(new URL('/login', `${proto}://${host}`));
   }
 });
 
