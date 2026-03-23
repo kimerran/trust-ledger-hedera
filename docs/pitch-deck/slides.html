@@ -437,7 +437,18 @@ html, body { background: #0A0F0E; }
 <!-- SLIDE 1 — COVER -->
 <div class="slide" id="s1">
   <div class="glow"></div>
-  <!-- content added in Task 3 -->
+  <div class="cover-logo">
+    <div class="logo-mark"><div class="logo-inner"></div></div>
+    <span class="logo-name">TrustLedger</span>
+  </div>
+  <div>
+    <div class="cover-headline">The compliance layer<br/>for <em>enterprise AI.</em></div>
+    <div class="cover-tagline">Cryptographic audit trails &nbsp;·&nbsp; Hedera blockchain &nbsp;·&nbsp; AWS KMS</div>
+  </div>
+  <div class="cover-footer">
+    <span class="seed-badge">Seed Round</span>
+    <span class="cover-year">2026</span>
+  </div>
   <div class="sfooter">Cover</div>
 </div>
 
@@ -445,14 +456,61 @@ html, body { background: #0A0F0E; }
 <div class="slide" id="s2">
   <div class="glow"></div>
   <div class="glow glow-bl"></div>
-  <!-- content added in Task 3 -->
+  <div class="slide-num">01 / Problem</div>
+  <div class="slide-title">AI makes decisions.<br/>Nobody can prove what happened.</div>
+  <div class="divider"></div>
+  <ul class="bullets">
+    <li>
+      <div class="bdot"></div>
+      <div class="btext"><strong>Billions of AI-driven decisions</strong> are made daily across finance, healthcare, and insurance — with no verifiable, tamper-proof audit trail attached to any of them.</div>
+    </li>
+    <li>
+      <div class="bdot"></div>
+      <div class="btext"><strong>Regulation is live and tightening:</strong> EU AI Act (2025) mandates explainability for high-risk AI. SEC guidance requires investment AI records. NIST AI RMF is being adopted across US federal agencies.</div>
+    </li>
+    <li>
+      <div class="bdot"></div>
+      <div class="btext"><strong>When an AI decision gets challenged</strong> — in court, by a regulator, or by a customer — there is no tamper-proof, independently verifiable evidence to defend it.</div>
+    </li>
+  </ul>
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="stat-val">$X B</div>
+      <div class="stat-lbl">AI Governance Market</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">2025</div>
+      <div class="stat-lbl">EU AI Act Enforcement</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">0</div>
+      <div class="stat-lbl">Crypto-anchored audit solutions</div>
+    </div>
+  </div>
   <div class="sfooter">Problem</div>
 </div>
 
 <!-- SLIDE 3 — SOLUTION -->
 <div class="slide" id="s3">
   <div class="glow"></div>
-  <!-- content added in Task 3 -->
+  <div class="slide-num">02 / Solution</div>
+  <div class="slide-title">TrustLedger: an immutable audit trail<br/>for every AI decision.</div>
+  <div class="divider"></div>
+  <ul class="bullets">
+    <li>
+      <div class="bdot"></div>
+      <div class="btext"><strong>Every AI decision is hashed, signed, and anchored</strong> — SHA-256 hash of the decision payload, signed with an AWS KMS ECDSA key, then written to Hedera Consensus Service (HCS) for permanent, ordered record.</div>
+    </li>
+    <li>
+      <div class="bdot"></div>
+      <div class="btext"><strong>Three-layer cryptographic verification:</strong> hash integrity proves the record wasn't altered, the KMS signature proves who signed it, and the HCS sequence number proves when it was recorded — all independently verifiable.</div>
+    </li>
+    <li>
+      <div class="bdot"></div>
+      <div class="btext"><strong>Zero-trust verification:</strong> any party — regulator, auditor, counterparty — can verify a decision record against the public Hedera mirror node without access to TrustLedger's systems.</div>
+    </li>
+  </ul>
+  <div class="callout"><strong>Live product.</strong> Running on Hedera Testnet today — decisions anchored, verifiable, and auditable end-to-end.</div>
   <div class="sfooter">Solution</div>
 </div>
 
