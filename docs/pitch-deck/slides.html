@@ -517,14 +517,62 @@ html, body { background: #0A0F0E; }
 <!-- SLIDE 4 — HOW IT WORKS -->
 <div class="slide" id="s4">
   <div class="glow"></div>
-  <!-- content added in Task 4 -->
+  <div class="slide-num">03 / How It Works</div>
+  <div class="slide-title">Three layers. One tamper-proof record.</div>
+  <div class="divider"></div>
+  <div class="pipeline">
+    <div class="pipe-step">
+      <div class="pipe-icon">🤖</div>
+      <div class="pipe-lbl">AI Decision</div>
+      <div class="pipe-desc">Model runs risk assessment via Claude. Full decision payload captured with context, model version, and timestamp.</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step">
+      <div class="pipe-icon">🔐</div>
+      <div class="pipe-lbl">Hash + Sign</div>
+      <div class="pipe-desc">SHA-256 hash of the decision. Signed with AWS KMS ECDSA key. Tamper-evident from this point forward.</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step">
+      <div class="pipe-icon">⛓️</div>
+      <div class="pipe-lbl">HCS Anchor</div>
+      <div class="pipe-desc">Hash + signature submitted to Hedera Consensus Service. Receives an immutable sequence number and consensus timestamp.</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step">
+      <div class="pipe-icon">✅</div>
+      <div class="pipe-lbl">Verify</div>
+      <div class="pipe-desc">Any party verifies hash integrity, signature validity, and HCS record via the public Hedera mirror node REST API.</div>
+    </div>
+  </div>
+  <div class="callout"><strong>Zero trust required</strong> — verification is fully independent and cryptographically guaranteed. No access to TrustLedger systems needed.</div>
   <div class="sfooter">How It Works</div>
 </div>
 
 <!-- SLIDE 5 — WHY NOW -->
 <div class="slide" id="s5">
   <div class="glow"></div>
-  <!-- content added in Task 4 -->
+  <div class="slide-num">04 / Why Now</div>
+  <div class="slide-title">Regulation caught up.<br/>Enterprises must act now.</div>
+  <div class="divider"></div>
+  <div class="col3">
+    <div class="col-card">
+      <span class="col-badge">2025</span>
+      <div class="col-title">EU AI Act</div>
+      <div class="col-desc">Mandatory explainability and audit records for high-risk AI systems. Applies to any company operating in the EU. Non-compliance fines up to €30M or 6% of global revenue.</div>
+    </div>
+    <div class="col-card">
+      <span class="col-badge">2024</span>
+      <div class="col-title">SEC AI Guidance</div>
+      <div class="col-desc">Investment advisers using AI must maintain records of AI-driven recommendations and be able to demonstrate the basis for each decision to examiners.</div>
+    </div>
+    <div class="col-card">
+      <span class="col-badge">Active</span>
+      <div class="col-title">NIST AI RMF</div>
+      <div class="col-desc">US federal risk management framework now being written into procurement requirements. AI systems must demonstrate traceability and accountability of decisions.</div>
+    </div>
+  </div>
+  <div class="closing">The compliance window is open — enterprises are actively looking for solutions today.</div>
   <div class="sfooter">Why Now</div>
 </div>
 
