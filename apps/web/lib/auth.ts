@@ -78,9 +78,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    authorized({ auth }) {
-      return !!auth?.user;
-    },
     async jwt({ token, user }) {
       if (user) {
         token.tenantId = (user as { tenantId?: string }).tenantId;
