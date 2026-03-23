@@ -58,11 +58,11 @@ export default async function PublicVerifyPage({ params }: { params: { id: strin
         <p className="text-muted-foreground mt-1 font-mono text-sm">{params.id}</p>
       </div>
 
-      <Card>
+      <Card className="bg-[#E0F2F1] border border-[#B2DFDB]">
         <CardHeader>
-          <CardTitle className="text-base">What is this?</CardTitle>
+          <CardTitle className="text-base text-[#0D5752]">What is this?</CardTitle>
         </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">
+        <CardContent className="text-sm text-[#0D5752]">
           This page provides cryptographic proof that an AI decision was recorded, signed with
           AWS KMS, and anchored immutably to the Hedera Consensus Service (HCS). The three
           verification layers below confirm the integrity of the audit record.

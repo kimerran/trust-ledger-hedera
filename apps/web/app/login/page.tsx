@@ -35,7 +35,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-[80vh] items-center justify-center">
-      <Card className="w-full max-w-sm">
+      <Card className="w-full max-w-sm border border-[#E0F2F1] shadow-[0_4px_16px_rgba(13,87,82,0.10)]">
         <CardHeader>
           <CardTitle>TrustLedger</CardTitle>
           <CardDescription>Sign in to your compliance dashboard</CardDescription>
@@ -73,7 +73,7 @@ export default function LoginPage() {
               />
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button type="submit" disabled={loading} className="w-full">
+            <Button type="submit" disabled={loading} className="w-full shadow-[0_2px_6px_rgba(13,87,82,0.3)]">
               {loading ? 'Signing in…' : 'Sign in'}
             </Button>
           </form>
