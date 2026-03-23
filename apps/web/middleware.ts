@@ -12,6 +12,6 @@ export default auth((req) => {
 export const config = {
   matcher: [
     // Protect all routes except login, public verify page, and Next.js internals
-    '/((?!login|verify|_next/static|_next/image|favicon.ico).*)',
+    '/((?!login|verify|api/auth|_next/static|_next/image|favicon.ico).*)',
   ],
 };
