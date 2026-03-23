@@ -23,7 +23,7 @@ export function StatsBar({ decisions }: StatsBarProps) {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
       {stats.map((s) => (
-        <Card key={s.label}>
+        <Card key={s.label} className="border border-[#E0F2F1] shadow-[0_4px_16px_rgba(13,87,82,0.10)]">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">{s.label}</CardTitle>
           </CardHeader>

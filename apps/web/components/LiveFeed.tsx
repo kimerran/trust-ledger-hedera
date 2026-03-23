@@ -53,7 +53,7 @@ export function LiveFeed() {
       ) : (
         <ul className="space-y-2 max-h-96 overflow-y-auto">
           {liveEvents.map((evt, i) => (
-            <li key={i} className="flex items-start gap-3 text-sm border-b pb-2">
+            <li key={i} className="flex items-start gap-3 text-sm border-b border-[#E0F2F1] pb-2">
               <Badge variant="secondary" className="shrink-0 text-xs">
                 {evt.type}
               </Badge>
