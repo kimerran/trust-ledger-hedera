@@ -45,7 +45,7 @@ export function AuditTable({ decisions }: AuditTableProps) {
         placeholder="Filter by Decision ID..."
         value={filter}
         onChange={(e) => setFilter(e.target.value)}
-        className="w-full max-w-sm px-3 py-2 rounded-md border bg-background text-sm font-mono placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+        className="w-full max-w-sm px-3 py-2 rounded-md border border-[#B2DFDB] bg-[#F0FAFA] text-sm font-mono placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
       />
 
       {filtered.length === 0 ? (
