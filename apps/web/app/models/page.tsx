@@ -26,15 +26,15 @@ export default async function ModelsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Model Registry</h1>
+        <h1 className="text-3xl font-bold text-[#0D5752]">Model Registry</h1>
         <p className="text-muted-foreground mt-1">
           {models.length} registered AI model{models.length !== 1 ? 's' : ''}
         </p>
       </div>
 
-      <Card>
+      <Card className="border border-[#E0F2F1] shadow-[0_4px_16px_rgba(13,87,82,0.10)]">
         <CardHeader>
-          <CardTitle className="text-base">Registered Models</CardTitle>
+          <CardTitle className="text-base text-[#0D5752]">Registered Models</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {models.length === 0 ? (

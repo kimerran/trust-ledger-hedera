@@ -24,7 +24,7 @@ export default async function AuditPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Audit Log</h1>
+        <h1 className="text-3xl font-bold text-[#0D5752]">Audit Log</h1>
         <p className="text-muted-foreground mt-1">
           {decisions.length} decision{decisions.length !== 1 ? 's' : ''} recorded
         </p>

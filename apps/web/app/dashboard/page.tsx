@@ -26,7 +26,7 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <h1 className="text-3xl font-bold text-[#0D5752]">Dashboard</h1>
         <p className="text-muted-foreground mt-1">
           Real-time AI decision audit trail monitoring
         </p>
@@ -34,9 +34,9 @@ export default async function DashboardPage() {
 
       <StatsBar decisions={decisions} />
 
-      <Card>
+      <Card className="border border-[#E0F2F1] shadow-[0_4px_16px_rgba(13,87,82,0.10)]">
         <CardHeader>
-          <CardTitle>Live Event Feed</CardTitle>
+          <CardTitle className="text-[#0D5752]">Live Event Feed</CardTitle>
         </CardHeader>
         <CardContent>
           <LiveFeed />
