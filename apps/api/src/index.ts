@@ -28,9 +28,17 @@ const PORT = parseInt(process.env.PORT ?? '3001', 10);
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
 
+const allowedOrigins = (process.env.CORS_ORIGIN ?? process.env.NEXTAUTH_URL ?? 'http://localhost:3000')
+  .split(',')
+  .map((o) => o.trim());
+
 app.use(
   cors({
-    origin: process.env.NEXTAUTH_URL ?? 'http://localhost:3000',
+    origin: (origin, cb) => {
+      // allow requests with no origin (server-to-server, curl, etc.)
+      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+      cb(new Error(`CORS: origin ${origin} not allowed`));
+    },
     credentials: true,
   }),
 );
