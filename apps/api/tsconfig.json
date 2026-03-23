@@ -5,8 +5,7 @@
     "moduleResolution": "node",
     "lib": ["ES2022"],
     "outDir": "./dist",
-    "rootDir": "./src",
-    "declaration": true,
+    "rootDir": ".",
     "sourceMap": true,
     "strict": true,
     "noUnusedLocals": true,
@@ -15,10 +14,7 @@
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "paths": {
-      "@trustledger/shared": ["../../packages/shared/src/index.ts"]
-    }
+    "skipLibCheck": true
   },
   "include": ["src/**/*", "db/**/*"],
   "exclude": ["node_modules", "dist"]

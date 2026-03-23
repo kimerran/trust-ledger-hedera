@@ -34,7 +34,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <a href="/models" className="text-muted-foreground hover:text-foreground">
                     Models
                   </a>
-
+                  <a
+                    href="https://trustledger-demo.up.railway.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    Demo
+                  </a>
                 </div>
               </div>
             </nav>
