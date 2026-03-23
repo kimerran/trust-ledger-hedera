@@ -39,4 +39,12 @@ yarn-error.log*
 
 # ── Claude / agent ────────────────────────────────────
 .agent/
+.agents/
+.superpowers/
 AGENT.md
+CLAUDE.md
+skills-lock.json
+
+# ── Pitch deck generator ──────────────────────────────
+docs/pitch-deck/node_modules/
+docs/pitch-deck/*.pdf
