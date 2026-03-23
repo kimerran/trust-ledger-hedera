@@ -1,0 +1,1096 @@
+# TrustLedger Pitch Deck Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Generate a 10-slide seed investor pitch deck as a PDF using HTML + Puppeteer.
+
+**Architecture:** All 10 slides live in a single `slides.html` file styled with pure CSS. A `generate.js` script launches headless Chromium via Puppeteer, loads the file, and exports a 1280×720px PDF. No build tools, no bundler, no external fonts.
+
+**Tech Stack:** Node.js, Puppeteer (headless Chrome), pure HTML/CSS
+
+---
+
+## File Map
+
+| File | Action | Purpose |
+|------|--------|---------|
+| `docs/pitch-deck/package.json` | Create | Standalone Node project — isolates Puppeteer from monorepo |
+| `docs/pitch-deck/slides.html` | Create | All 10 slides + complete CSS design system |
+| `docs/pitch-deck/generate.js` | Create | Puppeteer script: HTML → PDF |
+| `docs/pitch-deck/trustledger-pitch-deck.pdf` | Output (gitignored) | Final deliverable |
+| `.gitignore` | Modify | Add `docs/pitch-deck/node_modules/` and `docs/pitch-deck/*.pdf` |
+
+---
+
+## Task 1: Project Scaffold
+
+**Files:**
+- Create: `docs/pitch-deck/package.json`
+- Modify: `.gitignore`
+
+- [ ] **Step 1: Create `docs/pitch-deck/package.json`**
+
+```json
+{
+  "name": "trustledger-pitch-deck",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "generate": "node generate.js"
+  },
+  "dependencies": {
+    "puppeteer": "^22.0.0"
+  }
+}
+```
+
+- [ ] **Step 2: Add gitignore entries**
+
+Append to the root `.gitignore` under the `# ── Build artifacts` section:
+
+```
+docs/pitch-deck/node_modules/
+docs/pitch-deck/*.pdf
+```
+
+- [ ] **Step 3: Install dependencies**
+
+```bash
+cd docs/pitch-deck && npm install
+```
+
+Expected: `node_modules/` created, `package-lock.json` written. Puppeteer downloads Chromium (~170 MB).
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add docs/pitch-deck/package.json docs/pitch-deck/package-lock.json .gitignore
+git commit -m "chore(pitch-deck): scaffold standalone package with puppeteer"
+```
+
+---
+
+## Task 2: slides.html — CSS Design System + Shell
+
+Create the full `slides.html` with all CSS and 10 empty slide containers. Visual check before adding content.
+
+**Files:**
+- Create: `docs/pitch-deck/slides.html`
+
+- [ ] **Step 1: Create `docs/pitch-deck/slides.html` with design system CSS and empty slide shells**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TrustLedger — Seed Deck</title>
+<style>
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Page setup for PDF ── */
+@page { size: 1280px 720px; margin: 0; }
+html, body { background: #0A0F0E; }
+
+/* ── Slide container ── */
+.slide {
+  width: 1280px;
+  height: 720px;
+  background: #0A0F0E;
+  position: relative;
+  overflow: hidden;
+  padding: 44px 52px 36px;
+  display: flex;
+  flex-direction: column;
+  page-break-after: always;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+.slide:last-child { page-break-after: avoid; }
+
+/* ── Glow effect (position: absolute, top-right) ── */
+.glow {
+  position: absolute;
+  top: -50px; right: -50px;
+  width: 240px; height: 240px;
+  background: radial-gradient(circle, rgba(94,207,191,0.10) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+.glow-bl {
+  top: auto; right: auto;
+  bottom: -40px; left: -40px;
+  width: 180px; height: 180px;
+}
+
+/* ── Z-index: content above glow ── */
+.slide > *:not(.glow) { position: relative; z-index: 1; }
+
+/* ── Slide number label ── */
+.slide-num {
+  font-size: 8px;
+  color: #5ECFBF;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+/* ── Slide title ── */
+.slide-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+/* ── Gradient divider ── */
+.divider {
+  width: 36px;
+  height: 2px;
+  background: linear-gradient(90deg, #5ECFBF, transparent);
+  margin-bottom: 20px;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+/* ── Bullet list ── */
+.bullets { list-style: none; }
+.bullets li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+.bdot {
+  width: 5px; height: 5px;
+  background: #5ECFBF;
+  border-radius: 50%;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+.btext {
+  font-size: 11px;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.65;
+}
+.btext strong { color: #fff; font-weight: 600; }
+
+/* ── Stat boxes (bottom bar) ── */
+.stat-row {
+  display: flex;
+  gap: 14px;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid rgba(94,207,191,0.10);
+}
+.stat-box {
+  flex: 1;
+  background: rgba(94,207,191,0.06);
+  border: 1px solid rgba(94,207,191,0.12);
+  border-radius: 7px;
+  padding: 12px 16px;
+}
+.stat-val { font-size: 18px; font-weight: 800; color: #5ECFBF; line-height: 1; }
+.stat-lbl {
+  font-size: 8px;
+  color: rgba(255,255,255,0.30);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
+/* ── 3-column grid ── */
+.col3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 18px;
+  flex: 1;
+  align-items: stretch;
+}
+.col-card {
+  background: rgba(94,207,191,0.05);
+  border: 1px solid rgba(94,207,191,0.12);
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.col-badge {
+  display: inline-block;
+  background: rgba(94,207,191,0.12);
+  border: 1px solid rgba(94,207,191,0.25);
+  color: #5ECFBF;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  align-self: flex-start;
+}
+.col-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.col-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: #5ECFBF;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+.col-desc {
+  font-size: 9.5px;
+  color: rgba(255,255,255,0.50);
+  line-height: 1.55;
+  flex: 1;
+}
+
+/* ── Callout box ── */
+.callout {
+  background: rgba(94,207,191,0.05);
+  border: 1px solid rgba(94,207,191,0.18);
+  border-radius: 7px;
+  padding: 12px 18px;
+  font-size: 9.5px;
+  color: rgba(255,255,255,0.50);
+  text-align: center;
+  margin-top: 16px;
+  line-height: 1.5;
+}
+.callout strong { color: #5ECFBF; }
+
+/* ── Closing line (italic footer below columns) ── */
+.closing {
+  font-size: 9.5px;
+  color: rgba(255,255,255,0.35);
+  text-align: center;
+  font-style: italic;
+  padding-top: 14px;
+  border-top: 1px solid rgba(94,207,191,0.07);
+  margin-top: 14px;
+}
+
+/* ── Pipeline (How It Works) ── */
+.pipeline {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  gap: 0;
+  margin-bottom: 14px;
+}
+.pipe-step {
+  flex: 1;
+  background: rgba(94,207,191,0.05);
+  border: 1px solid rgba(94,207,191,0.13);
+  border-radius: 10px;
+  padding: 20px 14px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.pipe-icon { font-size: 24px; margin-bottom: 10px; }
+.pipe-lbl {
+  font-size: 9px;
+  font-weight: 700;
+  color: #5ECFBF;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
+}
+.pipe-desc {
+  font-size: 9px;
+  color: rgba(255,255,255,0.40);
+  line-height: 1.5;
+}
+.pipe-arrow {
+  font-size: 16px;
+  color: rgba(94,207,191,0.30);
+  padding: 0 10px;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+/* ── Two-column layout ── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  flex: 1;
+}
+
+/* ── Terminal / dashboard readout ── */
+.terminal {
+  background: #060C0B;
+  border: 1px solid rgba(94,207,191,0.13);
+  border-radius: 8px;
+  padding: 18px;
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: 9.5px;
+  line-height: 1.85;
+  color: rgba(255,255,255,0.55);
+}
+.terminal .tk { color: #5ECFBF; }
+.terminal .tv { color: rgba(255,255,255,0.85); }
+.terminal .tok { color: #34D399; font-weight: 700; }
+.terminal .dim { color: rgba(255,255,255,0.25); }
+
+/* ── Tier cards (Business Model) ── */
+.tier-row {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+  align-items: stretch;
+}
+.tier-card {
+  flex: 1;
+  background: rgba(94,207,191,0.05);
+  border: 1px solid rgba(94,207,191,0.13);
+  border-radius: 10px;
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+}
+.tier-card.featured {
+  background: rgba(94,207,191,0.10);
+  border-color: rgba(94,207,191,0.32);
+}
+.tier-name {
+  font-size: 9px;
+  font-weight: 800;
+  color: #5ECFBF;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+}
+.tier-price {
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 14px;
+  line-height: 1.2;
+}
+.tier-price span { font-size: 10px; font-weight: 400; color: rgba(255,255,255,0.40); }
+.tier-feats { list-style: none; flex: 1; }
+.tier-feats li {
+  font-size: 9px;
+  color: rgba(255,255,255,0.50);
+  line-height: 1.7;
+}
+.tier-feats li::before { content: '· '; color: #5ECFBF; }
+
+/* ── Cover-specific ── */
+.cover-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: auto;
+}
+.logo-mark {
+  width: 28px; height: 28px;
+  border: 2.5px solid #5ECFBF;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.logo-inner { width: 12px; height: 12px; background: #5ECFBF; border-radius: 2px; }
+.logo-name { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3px; }
+.cover-headline {
+  font-size: 48px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+}
+.cover-headline em { color: #5ECFBF; font-style: normal; }
+.cover-tagline {
+  font-size: 11px;
+  color: rgba(255,255,255,0.30);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-top: 14px;
+}
+.cover-footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: auto;
+  padding-top: 24px;
+}
+.seed-badge {
+  background: rgba(94,207,191,0.10);
+  border: 1px solid rgba(94,207,191,0.28);
+  color: #5ECFBF;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+.cover-year { font-size: 10px; color: rgba(255,255,255,0.22); }
+
+/* ── Founder slide ── */
+.founder-name {
+  font-size: 32px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+  margin-bottom: 4px;
+}
+.founder-role {
+  font-size: 10px;
+  color: #5ECFBF;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+.why-me {
+  background: rgba(94,207,191,0.05);
+  border-left: 3px solid #5ECFBF;
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  margin-top: auto;
+  font-size: 10.5px;
+  color: rgba(255,255,255,0.55);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* ── Ask slide ── */
+.funds-list { list-style: none; flex: 1; }
+.funds-list li {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+.fund-num {
+  font-size: 13px;
+  font-weight: 800;
+  color: #5ECFBF;
+  min-width: 24px;
+  flex-shrink: 0;
+}
+.fund-text {
+  font-size: 11px;
+  color: rgba(255,255,255,0.60);
+  line-height: 1.55;
+}
+.fund-text strong { color: #fff; }
+.contact-block {
+  background: rgba(94,207,191,0.05);
+  border: 1px solid rgba(94,207,191,0.12);
+  border-radius: 8px;
+  padding: 14px 20px;
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  margin-top: auto;
+}
+.contact-item { font-size: 9px; color: rgba(255,255,255,0.40); }
+.contact-item strong { display: block; font-size: 10.5px; color: rgba(255,255,255,0.80); margin-bottom: 2px; }
+
+/* ── Slide footer label ── */
+.sfooter {
+  position: absolute;
+  bottom: 18px;
+  right: 22px;
+  font-size: 7px;
+  color: rgba(255,255,255,0.15);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  z-index: 1;
+}
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1 — COVER -->
+<div class="slide" id="s1">
+  <div class="glow"></div>
+  <!-- content added in Task 3 -->
+  <div class="sfooter">Cover</div>
+</div>
+
+<!-- SLIDE 2 — PROBLEM -->
+<div class="slide" id="s2">
+  <div class="glow"></div>
+  <div class="glow glow-bl"></div>
+  <!-- content added in Task 3 -->
+  <div class="sfooter">Problem</div>
+</div>
+
+<!-- SLIDE 3 — SOLUTION -->
+<div class="slide" id="s3">
+  <div class="glow"></div>
+  <!-- content added in Task 3 -->
+  <div class="sfooter">Solution</div>
+</div>
+
+<!-- SLIDE 4 — HOW IT WORKS -->
+<div class="slide" id="s4">
+  <div class="glow"></div>
+  <!-- content added in Task 4 -->
+  <div class="sfooter">How It Works</div>
+</div>
+
+<!-- SLIDE 5 — WHY NOW -->
+<div class="slide" id="s5">
+  <div class="glow"></div>
+  <!-- content added in Task 4 -->
+  <div class="sfooter">Why Now</div>
+</div>
+
+<!-- SLIDE 6 — MARKET -->
+<div class="slide" id="s6">
+  <div class="glow"></div>
+  <!-- content added in Task 5 -->
+  <div class="sfooter">Market</div>
+</div>
+
+<!-- SLIDE 7 — PRODUCT -->
+<div class="slide" id="s7">
+  <div class="glow"></div>
+  <!-- content added in Task 5 -->
+  <div class="sfooter">Product</div>
+</div>
+
+<!-- SLIDE 8 — BUSINESS MODEL -->
+<div class="slide" id="s8">
+  <div class="glow"></div>
+  <!-- content added in Task 6 -->
+  <div class="sfooter">Business Model</div>
+</div>
+
+<!-- SLIDE 9 — FOUNDER -->
+<div class="slide" id="s9">
+  <div class="glow"></div>
+  <!-- content added in Task 6 -->
+  <div class="sfooter">Founder</div>
+</div>
+
+<!-- SLIDE 10 — THE ASK -->
+<div class="slide" id="s10">
+  <div class="glow"></div>
+  <!-- content added in Task 6 -->
+  <div class="sfooter">The Ask</div>
+</div>
+
+</body>
+</html>
+```
+
+- [ ] **Step 2: Open in browser and verify**
+
+Open `docs/pitch-deck/slides.html` in a browser. Expected: 10 dark-background panels each 1280px wide, glow accents visible in corners, footer labels visible. No console errors.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add docs/pitch-deck/slides.html
+git commit -m "feat(pitch-deck): add slides.html design system CSS and 10 empty slide shells"
+```
+
+---
+
+## Task 3: Slides 1–3 Content (Cover, Problem, Solution)
+
+**Files:**
+- Modify: `docs/pitch-deck/slides.html` — replace placeholder comments in `#s1`, `#s2`, `#s3`
+
+- [ ] **Step 1: Replace Slide 1 (Cover) placeholder comment with:**
+
+```html
+  <div class="cover-logo">
+    <div class="logo-mark"><div class="logo-inner"></div></div>
+    <span class="logo-name">TrustLedger</span>
+  </div>
+  <div>
+    <div class="cover-headline">The compliance layer<br/>for <em>enterprise AI.</em></div>
+    <div class="cover-tagline">Cryptographic audit trails &nbsp;·&nbsp; Hedera blockchain &nbsp;·&nbsp; AWS KMS</div>
+  </div>
+  <div class="cover-footer">
+    <span class="seed-badge">Seed Round</span>
+    <span class="cover-year">2026</span>
+  </div>
+```
+
+- [ ] **Step 2: Replace Slide 2 (Problem) placeholder comment with:**
+
+```html
+  <div class="slide-num">01 / Problem</div>
+  <div class="slide-title">AI makes decisions.<br/>Nobody can prove what happened.</div>
+  <div class="divider"></div>
+  <ul class="bullets">
+    <li>
+      <div class="bdot"></div>
+      <div class="btext"><strong>Billions of AI-driven decisions</strong> are made daily across finance, healthcare, and insurance — with no verifiable, tamper-proof audit trail attached to any of them.</div>
+    </li>
+    <li>
+      <div class="bdot"></div>
+      <div class="btext"><strong>Regulation is live and tightening:</strong> EU AI Act (2025) mandates explainability for high-risk AI. SEC guidance requires investment AI records. NIST AI RMF is being adopted across US federal agencies.</div>
+    </li>
+    <li>
+      <div class="bdot"></div>
+      <div class="btext"><strong>When an AI decision gets challenged</strong> — in court, by a regulator, or by a customer — there is no tamper-proof, independently verifiable evidence to defend it.</div>
+    </li>
+  </ul>
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="stat-val">$X B</div>
+      <div class="stat-lbl">AI Governance Market</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">2025</div>
+      <div class="stat-lbl">EU AI Act Enforcement</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">0</div>
+      <div class="stat-lbl">Crypto-anchored audit solutions</div>
+    </div>
+  </div>
+```
+
+- [ ] **Step 3: Replace Slide 3 (Solution) placeholder comment with:**
+
+```html
+  <div class="slide-num">02 / Solution</div>
+  <div class="slide-title">TrustLedger: an immutable audit trail<br/>for every AI decision.</div>
+  <div class="divider"></div>
+  <ul class="bullets">
+    <li>
+      <div class="bdot"></div>
+      <div class="btext"><strong>Every AI decision is hashed, signed, and anchored</strong> — SHA-256 hash of the decision payload, signed with an AWS KMS ECDSA key, then written to Hedera Consensus Service (HCS) for permanent, ordered record.</div>
+    </li>
+    <li>
+      <div class="bdot"></div>
+      <div class="btext"><strong>Three-layer cryptographic verification:</strong> hash integrity proves the record wasn't altered, the KMS signature proves who signed it, and the HCS sequence number proves when it was recorded — all independently verifiable.</div>
+    </li>
+    <li>
+      <div class="bdot"></div>
+      <div class="btext"><strong>Zero-trust verification:</strong> any party — regulator, auditor, counterparty — can verify a decision record against the public Hedera mirror node without access to TrustLedger's systems.</div>
+    </li>
+  </ul>
+  <div class="callout"><strong>Live product.</strong> Running on Hedera Testnet today — decisions anchored, verifiable, and auditable end-to-end.</div>
+```
+
+- [ ] **Step 4: Open in browser and verify**
+
+Open `docs/pitch-deck/slides.html`. Slides 1–3 should now render with content. Check:
+- Cover: headline is large and teal-accented, logo mark visible, seed badge shows
+- Problem: 3 bullets readable, stat boxes aligned at bottom
+- Solution: 3 bullets readable, live product callout shows
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add docs/pitch-deck/slides.html
+git commit -m "feat(pitch-deck): add cover, problem, solution slides (1-3)"
+```
+
+---
+
+## Task 4: Slides 4–5 Content (How It Works, Why Now)
+
+**Files:**
+- Modify: `docs/pitch-deck/slides.html` — replace placeholders in `#s4`, `#s5`
+
+- [ ] **Step 1: Replace Slide 4 (How It Works) placeholder comment with:**
+
+```html
+  <div class="slide-num">03 / How It Works</div>
+  <div class="slide-title">Three layers. One tamper-proof record.</div>
+  <div class="divider"></div>
+  <div class="pipeline">
+    <div class="pipe-step">
+      <div class="pipe-icon">🤖</div>
+      <div class="pipe-lbl">AI Decision</div>
+      <div class="pipe-desc">Model runs risk assessment via Claude. Full decision payload captured with context, model version, and timestamp.</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step">
+      <div class="pipe-icon">🔐</div>
+      <div class="pipe-lbl">Hash + Sign</div>
+      <div class="pipe-desc">SHA-256 hash of the decision. Signed with AWS KMS ECDSA key. Tamper-evident from this point forward.</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step">
+      <div class="pipe-icon">⛓️</div>
+      <div class="pipe-lbl">HCS Anchor</div>
+      <div class="pipe-desc">Hash + signature submitted to Hedera Consensus Service. Receives an immutable sequence number and consensus timestamp.</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step">
+      <div class="pipe-icon">✅</div>
+      <div class="pipe-lbl">Verify</div>
+      <div class="pipe-desc">Any party verifies hash integrity, signature validity, and HCS record via the public Hedera mirror node REST API.</div>
+    </div>
+  </div>
+  <div class="callout"><strong>Zero trust required</strong> — verification is fully independent and cryptographically guaranteed. No access to TrustLedger systems needed.</div>
+```
+
+- [ ] **Step 2: Replace Slide 5 (Why Now) placeholder comment with:**
+
+```html
+  <div class="slide-num">04 / Why Now</div>
+  <div class="slide-title">Regulation caught up.<br/>Enterprises must act now.</div>
+  <div class="divider"></div>
+  <div class="col3">
+    <div class="col-card">
+      <span class="col-badge">2025</span>
+      <div class="col-title">EU AI Act</div>
+      <div class="col-desc">Mandatory explainability and audit records for high-risk AI systems. Applies to any company operating in the EU. Non-compliance fines up to €30M or 6% of global revenue.</div>
+    </div>
+    <div class="col-card">
+      <span class="col-badge">2024</span>
+      <div class="col-title">SEC AI Guidance</div>
+      <div class="col-desc">Investment advisers using AI must maintain records of AI-driven recommendations and be able to demonstrate the basis for each decision to examiners.</div>
+    </div>
+    <div class="col-card">
+      <span class="col-badge">Active</span>
+      <div class="col-title">NIST AI RMF</div>
+      <div class="col-desc">US federal risk management framework now being written into procurement requirements. AI systems must demonstrate traceability and accountability of decisions.</div>
+    </div>
+  </div>
+  <div class="closing">The compliance window is open — enterprises are actively looking for solutions today.</div>
+```
+
+- [ ] **Step 3: Open in browser and verify**
+
+Slides 4–5 should render:
+- How It Works: 4 pipeline steps horizontally, icons visible, callout at bottom
+- Why Now: 3 regulation columns with year badges, closing line below
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add docs/pitch-deck/slides.html
+git commit -m "feat(pitch-deck): add how-it-works and why-now slides (4-5)"
+```
+
+---
+
+## Task 5: Slides 6–7 Content (Market, Product)
+
+**Files:**
+- Modify: `docs/pitch-deck/slides.html` — replace placeholders in `#s6`, `#s7`
+
+- [ ] **Step 1: Replace Slide 6 (Market) placeholder comment with:**
+
+```html
+  <div class="slide-num">05 / Market</div>
+  <div class="slide-title">A large market with no dominant player.</div>
+  <div class="divider"></div>
+  <div class="col3">
+    <div class="col-card">
+      <span class="col-badge">TAM</span>
+      <div class="col-val">$X B</div>
+      <div class="col-title">AI Governance &amp; Compliance Software</div>
+      <div class="col-desc">Total addressable market for AI audit, explainability, and compliance tooling. Growing at ~35% CAGR as regulatory pressure increases globally. <em style="color:rgba(255,255,255,0.25);font-size:8.5px">(Source: TBD — founder to add citation)</em></div>
+    </div>
+    <div class="col-card featured">
+      <span class="col-badge">SAM</span>
+      <div class="col-val">$X B</div>
+      <div class="col-title">Regulated Enterprises Using AI</div>
+      <div class="col-desc">Enterprises in financial services, healthcare, insurance, and legal verticals actively deploying AI in decision workflows — subject to regulatory scrutiny today.</div>
+    </div>
+    <div class="col-card">
+      <span class="col-badge">SOM</span>
+      <div class="col-val">$X M</div>
+      <div class="col-title">Beachhead Segment</div>
+      <div class="col-desc">Mid-market compliance-focused companies (100–2,000 employees) with AI in production and an active need for audit trail tooling — reachable in year one.</div>
+    </div>
+  </div>
+```
+
+- [ ] **Step 2: Replace Slide 7 (Product) placeholder comment with:**
+
+```html
+  <div class="slide-num">06 / Product</div>
+  <div class="slide-title">Built and working today.</div>
+  <div class="divider"></div>
+  <div class="two-col">
+    <div>
+      <ul class="bullets">
+        <li><div class="bdot"></div><div class="btext"><strong>Real-time audit dashboard</strong> — every AI decision logged, timestamped, and visible in a searchable web UI</div></li>
+        <li><div class="bdot"></div><div class="btext"><strong>3-layer cryptographic verification</strong> — hash integrity, KMS signature, and HCS sequence number checked independently</div></li>
+        <li><div class="bdot"></div><div class="btext"><strong>Public verification URL</strong> — share a link; anyone can verify a decision record without an account</div></li>
+        <li><div class="bdot"></div><div class="btext"><strong>Retention policies</strong> — configurable per-topic record retention on Hedera HCS</div></li>
+        <li><div class="bdot"></div><div class="btext"><strong>AI risk assessment</strong> — every decision scored by Claude before anchoring, with reasoning stored in the audit record</div></li>
+      </ul>
+    </div>
+    <div>
+      <div class="terminal">
+<span class="dim">$ GET /verify/dec_a3f9b2c1</span>
+
+<span class="tk">decision_id</span>  <span class="tv">dec_a3f9b2c1</span>
+<span class="tk">model        </span>  <span class="tv">claude-haiku-4-5</span>
+<span class="tk">risk_score   </span>  <span class="tv">0.12 (LOW)</span>
+<span class="tk">hash         </span>  <span class="tv">sha256:e3b0c44298fc…</span>
+<span class="tk">signed_by    </span>  <span class="tv">AWS KMS / arn:…</span>
+<span class="tk">hcs_topic    </span>  <span class="tv">0.0.5291949</span>
+<span class="tk">sequence     </span>  <span class="tv">#4821</span>
+<span class="tk">anchored_at  </span>  <span class="tv">2026-03-23T14:02:11Z</span>
+
+<span class="tk">verification </span>  <span class="tok">✓ PASS (3/3 layers)</span>
+      </div>
+      <div class="callout" style="margin-top:12px">Try it: <strong>[demo URL]</strong> &nbsp;·&nbsp; Placeholder — founder to fill</div>
+    </div>
+  </div>
+```
+
+- [ ] **Step 3: Open in browser and verify**
+
+- Market: 3 columns showing TAM/SAM/SOM, middle card (SAM) has `featured` highlighting
+- Product: left column shows 5 capability bullets, right column shows terminal readout
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add docs/pitch-deck/slides.html
+git commit -m "feat(pitch-deck): add market and product slides (6-7)"
+```
+
+---
+
+## Task 6: Slides 8–10 Content (Business Model, Founder, Ask)
+
+**Files:**
+- Modify: `docs/pitch-deck/slides.html` — replace placeholders in `#s8`, `#s9`, `#s10`
+
+- [ ] **Step 1: Replace Slide 8 (Business Model) placeholder comment with:**
+
+```html
+  <div class="slide-num">07 / Business Model</div>
+  <div class="slide-title">SaaS pricing that scales with usage.</div>
+  <div class="divider"></div>
+  <div class="tier-row">
+    <div class="tier-card">
+      <div class="tier-name">Starter</div>
+      <div class="tier-price">Pay-as-you-go <span>per decision anchored</span></div>
+      <ul class="tier-feats">
+        <li>Up to 10,000 decisions/month</li>
+        <li>Shared HCS topic</li>
+        <li>3-layer verification</li>
+        <li>Public verify URLs</li>
+        <li>90-day audit log retention</li>
+      </ul>
+    </div>
+    <div class="tier-card featured">
+      <div class="tier-name">Professional</div>
+      <div class="tier-price">Monthly seat license <span>per active user</span></div>
+      <ul class="tier-feats">
+        <li>Unlimited decisions</li>
+        <li>Dedicated HCS topic</li>
+        <li>Audit export (PDF, JSON)</li>
+        <li>Configurable retention policy</li>
+        <li>Priority support + SLA</li>
+      </ul>
+    </div>
+    <div class="tier-card">
+      <div class="tier-name">Enterprise</div>
+      <div class="tier-price">Custom contract <span>annual</span></div>
+      <ul class="tier-feats">
+        <li>Multi-topic, multi-model</li>
+        <li>Custom KMS key integration</li>
+        <li>SSO + RBAC</li>
+        <li>Compliance reporting suite</li>
+        <li>Dedicated onboarding</li>
+      </ul>
+    </div>
+  </div>
+  <div class="closing">Land with compliance teams · Expand to all AI workloads across the org</div>
+```
+
+- [ ] **Step 2: Replace Slide 9 (Founder) placeholder comment with:**
+
+```html
+  <div class="slide-num">08 / Founder</div>
+  <div class="founder-name">[Founder Name]</div>
+  <div class="founder-role">Founder &amp; CEO</div>
+  <ul class="bullets">
+    <li>
+      <div class="bdot"></div>
+      <div class="btext"><strong>[Credential 1]</strong> — e.g., "5 years at [Company] building enterprise compliance tooling used by X Fortune 500 clients"</div>
+    </li>
+    <li>
+      <div class="bdot"></div>
+      <div class="btext"><strong>[Credential 2]</strong> — e.g., "Previously led AI governance initiative at [Company], directly familiar with the audit trail gap"</div>
+    </li>
+    <li>
+      <div class="bdot"></div>
+      <div class="btext"><strong>[Credential 3]</strong> — e.g., "Deep technical background in blockchain infrastructure and cryptographic signing systems"</div>
+    </li>
+  </ul>
+  <div class="why-me">"[One sentence on why you are uniquely positioned to build this — your unfair insight, experience, or access.]"</div>
+```
+
+- [ ] **Step 3: Replace Slide 10 (The Ask) placeholder comment with:**
+
+```html
+  <div class="slide-num">09 / The Ask</div>
+  <div class="slide-title">Raising a seed round.</div>
+  <div class="divider"></div>
+  <ul class="funds-list">
+    <li>
+      <div class="fund-num">01</div>
+      <div class="fund-text"><strong>Product development</strong> — complete Hedera Mainnet deployment, enterprise audit export, SSO/RBAC, and compliance reporting suite</div>
+    </li>
+    <li>
+      <div class="fund-num">02</div>
+      <div class="fund-text"><strong>Go-to-market</strong> — target compliance and risk officers at 50 mid-market enterprises in financial services; build first 3 paying design partners</div>
+    </li>
+    <li>
+      <div class="fund-num">03</div>
+      <div class="fund-text"><strong>Infrastructure &amp; security</strong> — production Hedera Mainnet costs, AWS KMS at scale, SOC 2 Type I audit, penetration testing</div>
+    </li>
+    <li>
+      <div class="fund-num">04</div>
+      <div class="fund-text"><strong>First hire</strong> — founding engineer (full-stack / blockchain) to accelerate enterprise feature velocity</div>
+    </li>
+  </ul>
+  <div class="contact-block">
+    <div class="contact-item"><strong>[Founder Name]</strong>Founder &amp; CEO</div>
+    <div class="contact-item"><strong>[email@domain.com]</strong>Email</div>
+    <div class="contact-item"><strong>[trustledger.io]</strong>Website</div>
+  </div>
+```
+
+- [ ] **Step 4: Open in browser and verify all 10 slides**
+
+Scroll through all slides. Check:
+- Slide 8: 3 tier cards, Professional tier has featured styling, closing line shows
+- Slide 9: Founder name placeholder, 3 credential bullets, why-me callout at bottom
+- Slide 10: 4 numbered use-of-funds items, contact block at bottom
+
+Verify no slide content overflows its 720px height.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add docs/pitch-deck/slides.html
+git commit -m "feat(pitch-deck): add business model, founder, and ask slides (8-10)"
+```
+
+---
+
+## Task 7: generate.js + PDF Export
+
+**Files:**
+- Create: `docs/pitch-deck/generate.js`
+
+- [ ] **Step 1: Create `docs/pitch-deck/generate.js`**
+
+```js
+const puppeteer = require('puppeteer');
+const path = require('path');
+const fs = require('fs');
+
+(async () => {
+  const slidesPath = path.resolve(__dirname, 'slides.html');
+  const outputPath = path.resolve(__dirname, 'trustledger-pitch-deck.pdf');
+
+  if (!fs.existsSync(slidesPath)) {
+    console.error('slides.html not found at', slidesPath);
+    process.exit(1);
+  }
+
+  console.log('Launching browser...');
+  const browser = await puppeteer.launch({ headless: 'new' });
+  const page = await browser.newPage();
+
+  console.log('Loading slides.html...');
+  await page.goto(`file://${slidesPath}`, { waitUntil: 'networkidle0' });
+
+  console.log('Exporting PDF...');
+  await page.pdf({
+    path: outputPath,
+    width: '1280px',
+    height: '720px',
+    printBackground: true,
+    pageRanges: '',
+  });
+
+  await browser.close();
+
+  const stats = fs.statSync(outputPath);
+  const kb = Math.round(stats.size / 1024);
+  console.log(`Done: ${outputPath} (${kb} KB)`);
+})();
+```
+
+- [ ] **Step 2: Generate the PDF**
+
+```bash
+cd docs/pitch-deck && node generate.js
+```
+
+Expected output:
+```
+Launching browser...
+Loading slides.html...
+Exporting PDF...
+Done: .../trustledger-pitch-deck.pdf (XXX KB)
+```
+
+- [ ] **Step 3: Verify the PDF**
+
+Open `docs/pitch-deck/trustledger-pitch-deck.pdf`. Check:
+- Page count: exactly 10 pages
+- Each slide fills the page edge-to-edge with no white margins
+- Dark background renders (not white — confirm `printBackground: true` is working)
+- Text is sharp and readable on all slides
+- Teal glow accents are visible
+
+If pages show white margins: confirm the `width`/`height` params in `page.pdf()` match the `.slide` CSS dimensions exactly (`1280px` / `720px`).
+
+If background is white: confirm `printBackground: true` is present.
+
+- [ ] **Step 4: Verify PDF is gitignored**
+
+```bash
+git status docs/pitch-deck/
+```
+
+Expected: `trustledger-pitch-deck.pdf` does NOT appear as an untracked file. `generate.js` appears as untracked.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add docs/pitch-deck/generate.js
+git commit -m "feat(pitch-deck): add puppeteer generate.js script — run node generate.js to export PDF"
+```
+
+---
+
+## Done
+
+The pitch deck is complete. To regenerate the PDF after editing slides:
+
+```bash
+cd docs/pitch-deck
+node generate.js
+```
+
+### Founder placeholders to fill before sending to investors
+
+Open `docs/pitch-deck/slides.html` and search for these:
+
+| Slide | What to fill |
+|-------|-------------|
+| Slide 2 | `$X B` — AI governance market size (add source) |
+| Slide 6 | `$X B` / `$X B` / `$X M` — TAM/SAM/SOM figures with citations |
+| Slide 7 | `[demo URL]` — live demo link |
+| Slide 9 | `[Founder Name]`, 3 credential bullets, why-me sentence |
+| Slide 10 | `[Founder Name]`, `[email@domain.com]`, `[trustledger.io]` |
