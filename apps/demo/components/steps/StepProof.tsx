@@ -26,17 +26,27 @@ export function StepProof({ decisionId, proof, onFetchProof, onStartOver, isLoad
   };
 
   return (
-    <Card>
+    <Card className="border border-[#E0F2F1] rounded-xl shadow-[0_4px_16px_rgba(13,87,82,0.10)]">
       <CardHeader>
-        <CardTitle>Step 4: Proof &amp; Summary</CardTitle>
-        <CardDescription>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[#5F9EA0] mb-1">Step 5 of 5</p>
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-md bg-[#0D5752] text-white flex items-center justify-center text-xs font-bold shrink-0">
+            5
+          </div>
+          <CardTitle className="text-[#0D5752]">Proof &amp; Summary</CardTitle>
+        </div>
+        <CardDescription className="text-[#5F9EA0]">
           Fetch the complete audit proof artifact — a self-contained JSON document that any auditor
           can use to independently verify this decision.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {!proof ? (
-          <Button onClick={onFetchProof} disabled={isLoading}>
+          <Button
+            onClick={onFetchProof}
+            disabled={isLoading}
+            className="shadow-[0_2px_6px_rgba(13,87,82,0.3)]"
+          >
             {isLoading ? 'Fetching proof...' : `GET /decisions/${decisionId}/proof`}
           </Button>
         ) : (
@@ -66,7 +76,10 @@ export function StepProof({ decisionId, proof, onFetchProof, onStartOver, isLoad
               <Button variant="outline" onClick={onStartOver}>
                 Start Over
               </Button>
-              <Button onClick={handleDownload}>
+              <Button
+                onClick={handleDownload}
+                className="shadow-[0_2px_6px_rgba(13,87,82,0.3)]"
+              >
                 Download Proof JSON
               </Button>
             </div>

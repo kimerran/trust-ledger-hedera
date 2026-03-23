@@ -24,10 +24,16 @@ const overallVariant: Record<string, 'success' | 'warning' | 'destructive'> = {
 
 export function StepVerify({ decisionId, verification, onVerify, onNext, isLoading }: StepVerifyProps) {
   return (
-    <Card>
+    <Card className="border border-[#E0F2F1] rounded-xl shadow-[0_4px_16px_rgba(13,87,82,0.10)]">
       <CardHeader>
-        <CardTitle>Step 3: Three-Layer Verification</CardTitle>
-        <CardDescription>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[#5F9EA0] mb-1">Step 3 of 5</p>
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-md bg-[#0D5752] text-white flex items-center justify-center text-xs font-bold shrink-0">
+            3
+          </div>
+          <CardTitle className="text-[#0D5752]">Three-Layer Verification</CardTitle>
+        </div>
+        <CardDescription className="text-[#5F9EA0]">
           Independently verify the decision&apos;s integrity through three layers: hash recompute,
           KMS signature verification, and HCS anchor lookup via the Hedera Mirror Node.
         </CardDescription>
@@ -35,15 +41,19 @@ export function StepVerify({ decisionId, verification, onVerify, onNext, isLoadi
       <CardContent className="space-y-4">
         {!verification ? (
           <>
-            <div className="p-4 rounded-md bg-muted/50 text-sm space-y-2">
-              <p className="font-medium">Three verification layers:</p>
-              <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+            <div className="p-4 rounded-md bg-[#E0F2F1] border border-[#B2DFDB] text-sm space-y-2">
+              <p className="font-medium text-[#0D5752]">Three verification layers:</p>
+              <ol className="list-decimal list-inside space-y-1 text-[#5F9EA0]">
                 <li><strong>Hash Match</strong> — Recompute canonical hash from input features and compare</li>
                 <li><strong>Signature Valid</strong> — Verify KMS ECDSA signature against stored hash</li>
                 <li><strong>HCS Anchor</strong> — Query Hedera Mirror Node for the anchored message</li>
               </ol>
             </div>
-            <Button onClick={onVerify} disabled={isLoading}>
+            <Button
+              onClick={onVerify}
+              disabled={isLoading}
+              className="shadow-[0_2px_6px_rgba(13,87,82,0.3)]"
+            >
               {isLoading ? 'Verifying...' : `GET /decisions/${decisionId}/verify`}
             </Button>
           </>
@@ -96,7 +106,12 @@ export function StepVerify({ decisionId, verification, onVerify, onNext, isLoadi
             </UnderTheHood>
 
             <div className="flex justify-end pt-2">
-              <Button onClick={onNext}>Next: Proof &amp; Summary</Button>
+              <Button
+                onClick={onNext}
+                className="shadow-[0_2px_6px_rgba(13,87,82,0.3)]"
+              >
+                Next: Proof &amp; Summary
+              </Button>
             </div>
           </>
         )}
